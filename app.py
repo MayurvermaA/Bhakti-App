@@ -108,6 +108,25 @@ def hanuman():
 @app.route("/history/<name>")
 def history(name):
 
+    conn = sqlite3.connect("cache.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+    "SELECT content FROM history_cache WHERE name=?",
+    (name,)
+)
+
+    row = cursor.fetchone()
+    conn.close()
+
+    if row:
+        history = row[0]
+    return render_template(
+        "history.html",
+        name=name,
+        history=history
+    )
+
     prompt = f"""
 {name} के बारे में हिन्दी में लगभग 350 शब्दों में विस्तार से बताइए।
 
@@ -125,6 +144,17 @@ Markdown बिल्कुल मत प्रयोग करें।
 """
 
     history = ask_gemini(prompt)
+
+    conn = sqlite3.connect("cache.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT OR REPLACE INTO history_cache (name, content) VALUES (?, ?)",
+        (name, history)
+)
+
+    conn.commit()
+    conn.close()    
 
     return render_template(
         "history.html",
@@ -200,3 +230,4 @@ if __name__ == "__main__":
         port=int(os.environ.get("PORT", 5000)),
         debug=True
     )
+    

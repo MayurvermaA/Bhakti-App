@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hindu Chat</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🕉 AI Hindu Chat</h1>
+
+    <form action="/chat" method="POST">
+
+        <input
+            type="text"
+            id="question"
+            name="question"
+            placeholder="अपना प्रश्न लिखें..."
+            required>
+
+        <button type="submit">पूछें</button>
+
+        <button type="button" onclick="startListening()">
+            🎤 Voice
+        </button>
+
+        <button type="button" onclick="speakAnswer()">
+            🔊 Listen
+        </button>
+
+    </form>
+
+    {% if answer %}
+
+    <h2>उत्तर</h2>
+
+    <p id="answer">
+        {{ answer }}
+    </p>
+
+    {% endif %}
+
+</div>
+
+<script>
+
+function startListening() {
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        alert("Speech Recognition उपलब्ध नहीं है");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "hi-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = function () {
+        console.log("Mic Started...");
+    };
+
+    recognition.onresult = function (event) {
+        document.getElementById("question").value =
+            event.results[0][0].transcript;
+    };
+
+    recognition.onerror = function (event) {
+        if (event.error !== "no-speech") {
+            alert("Voice Error: " + event.error);
+        }
+    };
+
+    recognition.onend = function () {
+        console.log("Mic Stopped");
+    };
+
+    recognition.start();
+}
+
+function speakAnswer() {
+
+    let answer = document.getElementById("answer");
+
+    if (!answer) {
+
+        alert("पहले प्रश्न पूछें।");
+        return;
+
+    }
+
+    window.speechSynthesis.cancel();
+
+    let speech = new SpeechSynthesisUtterance(answer.innerText);
+
+    speech.lang = "hi-IN";
+    speech.rate = 1;
+    speech.pitch = 1;
+    speech.volume = 1;
+
+    window.speechSynthesis.speak(speech);
+
+}
+
+</script>
+
+</body>
+</html>

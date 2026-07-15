@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Hindu History Explorer</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+🕉 AI Hindu History Explorer
+
+</nav>
+
+<div class="hero">
+
+<h1>Welcome 🙏</h1>
+
+<p>Click on any deity to know their history with AI</p>
+
+</div>
+
+<div class="search-box">
+
+<input
+type="text"
+id="search"
+placeholder="🔍 Search Deity..."
+onkeyup="searchCard()">
+
+</div>
+
+<a href="/chat" class="chat-btn">
+🤖 AI Chat
+</a>
+<a href="/hanuman" class="chat-btn">
+    🚩 Hanuman Chalisa
+</a>
+
+<div class="container">
+
+<div class="card">
+
+<img src="{{ url_for('static', filename='images/hanuman.jpeg') }}">
+
+<h2>Hanuman Ji</h2>
+
+<a href="/history/Hanuman ji">Open</a>
+
+</div>
+
+<div class="card">
+
+<img src="{{ url_for('static', filename='images/ram.jpeg') }}">
+
+<h2>Shri Ram</h2>
+
+<a href="/history/Shri Ram">Open</a>
+
+</div>
+
+<div class="card">
+
+<img src="{{ url_for('static', filename='images/krishna.jpeg') }}">
+
+<h2>Shri Krishna</h2>
+
+<a href="/history/Shri Krishna">Open</a>
+
+</div>
+
+<div class="card">
+
+<img src="{{ url_for('static', filename='images/radha.jpeg') }}">
+
+<h2>Radha Rani</h2>
+
+<a href="/history/Radha">Open</a>
+
+</div>
+
+</div>
+
+<script>
+
+function searchCard(){
+
+let input=document.getElementById("search").value.toUpperCase();
+
+let cards=document.querySelectorAll(".card");
+
+cards.forEach(card=>{
+
+let title=card.querySelector("h2").innerText.toUpperCase();
+
+if(title.indexOf(input)>-1)
+
+card.style.display="block";
+
+else
+
+card.style.display="none";
+
+});
+
+}
+
+</script>
+
+</body>
+
+</html>

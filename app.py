@@ -3,6 +3,7 @@ import time
 from flask import Flask, render_template, request
 from dotenv import load_dotenv
 from google import genai
+import sqlite3
 
 # ==========================================
 # Load Environment Variables
@@ -19,6 +20,27 @@ client = genai.Client(
 # ==========================================
 
 app = Flask(__name__)
+
+# ==========================================
+# Cache Database
+# ==========================================
+
+def init_db():
+    conn = sqlite3.connect("cache.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS history_cache (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT UNIQUE,
+            content TEXT
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
+init_db()
 
 # ==========================================
 # Gemini Helper Function

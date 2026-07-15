@@ -2,6 +2,32 @@
 <html lang="hi">
 <head>
 
+    <style>
+#loader{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#fff8e8;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+.spinner{
+    width:70px;
+    height:70px;
+    border:8px solid #ffd180;
+    border-top:8px solid #ff6f00;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+@keyframes spin{
+    to{transform:rotate(360deg);}
+}
+</style>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -12,6 +38,9 @@
 </head>
 
 <body>
+    <div id="loader">
+    <div class="spinner"></div>
+</div>
 
 <nav>
 
@@ -112,6 +141,50 @@ card.style.display="none";
 
 }
 
+</script>
+
+<script>
+window.onload = function () {
+    document.getElementById("loader").style.display = "none";
+};
+</script>
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<style>
+#loader{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#fff8e8;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+.spinner{
+    width:70px;
+    height:70px;
+    border:8px solid #ffd180;
+    border-top:8px solid #ff6f00;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+</style>
+
+<script>
+window.addEventListener("load", function () {
+    document.getElementById("loader").style.display = "none";
+});
 </script>
 
 </body>

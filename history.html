@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ name }}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav>
+    <h2>🕉 AI Hindu History Explorer</h2>
+</nav>
+
+<div class="card" style="max-width:800px;margin:40px auto;padding:30px;">
+
+    <h1>{{ name }}</h1>
+
+    <p style="font-size:20px;line-height:1.8;">
+        {{ history }}
+    </p>
+
+    <br>
+
+    <a href="/">⬅ Back to Home</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hanuman Chalisa</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<nav>
+🚩 Hanuman Chalisa
+</nav>
+
+<div class="container">
+
+<div class="card">
+
+<img src="{{ url_for('static', filename='images/hanuman.jpeg') }}">
+
+<h2>🚩 Hanuman Chalisa</h2>
+
+<audio controls style="width:100%;">
+    <source src="{{ url_for('static', filename='audio/hanuman_chalisa.mp3') }}" type="audio/mpeg">
+</audio>
+
+<br><br>
+
+<a href="/">⬅ Back</a>
+
+</div>
+
+</div>
+
+</body>
+</html>

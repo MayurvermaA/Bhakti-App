@@ -1,192 +1,146 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
 
-    <style>
-#loader{
-    position:fixed;
-    top:0;
-    left:0;
+body{
+    background:linear-gradient(135deg,#ff9933,#ffe8c7);
+    min-height:100vh;
+}
+
+/* Navbar */
+
+nav{
     width:100%;
-    height:100%;
-    background:#fff8e8;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-}
-.spinner{
-    width:70px;
-    height:70px;
-    border:8px solid #ffd180;
-    border-top:8px solid #ff6f00;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-}
-@keyframes spin{
-    to{transform:rotate(360deg);}
-}
-</style>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>AI Hindu History Explorer</title>
-
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
-</head>
-
-<body>
-    <div id="loader">
-    <div class="spinner"></div>
-</div>
-
-<nav>
-
-🕉 AI Hindu History Explorer
-
-</nav>
-
-<div class="hero">
-
-<h1>Welcome 🙏</h1>
-
-<p>Click on any deity to know their history with AI</p>
-
-</div>
-
-<div class="search-box">
-
-<input
-type="text"
-id="search"
-placeholder="🔍 Search Deity..."
-onkeyup="searchCard()">
-
-</div>
-
-<a href="/chat" class="chat-btn">
-🤖 AI Chat
-</a>
-<a href="/hanuman" class="chat-btn">
-    🚩 Hanuman Chalisa
-</a>
-
-<div class="container">
-
-<div class="card">
-
-<img src="{{ url_for('static', filename='images/hanuman.jpeg') }}">
-
-<h2>Hanuman Ji</h2>
-
-<a href="/history/Hanuman ji">Open</a>
-
-</div>
-
-<div class="card">
-
-<img src="{{ url_for('static', filename='images/ram.jpeg') }}">
-
-<h2>Shri Ram</h2>
-
-<a href="/history/Shri Ram">Open</a>
-
-</div>
-
-<div class="card">
-
-<img src="{{ url_for('static', filename='images/krishna.jpeg') }}">
-
-<h2>Shri Krishna</h2>
-
-<a href="/history/Shri Krishna">Open</a>
-
-</div>
-
-<div class="card">
-
-<img src="{{ url_for('static', filename='images/radha.jpeg') }}">
-
-<h2>Radha Rani</h2>
-
-<a href="/history/Radha">Open</a>
-
-</div>
-
-</div>
-
-<script>
-
-function searchCard(){
-
-let input=document.getElementById("search").value.toUpperCase();
-
-let cards=document.querySelectorAll(".card");
-
-cards.forEach(card=>{
-
-let title=card.querySelector("h2").innerText.toUpperCase();
-
-if(title.indexOf(input)>-1)
-
-card.style.display="block";
-
-else
-
-card.style.display="none";
-
-});
-
-}
-
-</script>
-
-<script>
-window.onload = function () {
-    document.getElementById("loader").style.display = "none";
-};
-</script>
-
-<div id="loader">
-    <div class="spinner"></div>
-</div>
-
-<style>
-#loader{
-    position:fixed;
+    background:#ff6b00;
+    color:white;
+    text-align:center;
+    padding:18px;
+    font-size:30px;
+    font-weight:bold;
+    position:sticky;
     top:0;
-    left:0;
+    box-shadow:0 5px 15px rgba(0,0,0,.25);
+    z-index:999;
+}
+
+/* Heading */
+
+.hero{
+    text-align:center;
+    margin:30px 10px;
+}
+
+.hero h1{
+    font-size:45px;
+    color:#ff6b00;
+}
+
+.hero p{
+    font-size:20px;
+    color:#444;
+}
+
+/* Cards */
+
+.container{
+    width:90%;
+    margin:30px auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+    gap:30px;
+}
+
+.card{
+    background:rgba(255,255,255,.75);
+    backdrop-filter:blur(12px);
+    border-radius:25px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+    transition:.4s;
+}
+
+.card:hover{
+    transform:translateY(-10px) scale(1.03);
+}
+
+/* Image */
+
+.card img{
     width:100%;
-    height:100%;
-    background:#fff8e8;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
+    height:320px;
+    object-fit:contain;
+    background:white;
+    padding:10px;
 }
-.spinner{
-    width:70px;
-    height:70px;
-    border:8px solid #ffd180;
-    border-top:8px solid #ff6f00;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
+
+/* Name */
+
+.card h2{
+    color:#ff6b00;
+    margin-top:15px;
 }
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
+
+/* Button */
+
+.card a{
+    display:inline-block;
+    margin:20px;
+    padding:12px 25px;
+    background:#ff6b00;
+    color:white;
+    border-radius:10px;
+    text-decoration:none;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.card a:hover{
+    background:#d95500;
+}
+
+/* AI Chat Button */
+
+.chat-btn{
+    display:block;
+    width:260px;
+    margin:40px auto;
+    padding:16px;
+    text-align:center;
+    text-decoration:none;
+    font-size:22px;
+    color:white;
+    background:#0066ff;
+    border-radius:15px;
+    transition:.3s;
+}
+
+.chat-btn:hover{
+    background:#004ecc;
+}
+
+
+
+.card img{
+    width:100%;
+    height:320px;
+    object-fit:cover;
+    display:block;
+}
+
+@media (max-width:768px){
+
+    .container{
+        grid-template-columns:1fr;
+    }
+
+    .card img{
+        height:260px;
+    }
+
+    .card h2{
+        font-size:24px;
     }
 }
-</style>
-
-<script>
-window.addEventListener("load", function () {
-    document.getElementById("loader").style.display = "none";
-});
-</script>
-
-</body>
-
-</html>

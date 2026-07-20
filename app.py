@@ -1,9 +1,10 @@
 import os
 import time
+import sqlite3
+
 from flask import Flask, render_template, request
 from dotenv import load_dotenv
 from google import genai
-import sqlite3
 
 # ==========================================
 # Load Environment Variables
@@ -30,7 +31,7 @@ def init_db():
     cursor = conn.cursor()
 
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS history_cache (
+        CREATE TABLE IF NOT EXISTS history_cache(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT UNIQUE,
             content TEXT
@@ -43,7 +44,7 @@ def init_db():
 init_db()
 
 # ==========================================
-# Gemini Helper Function
+# Gemini Helper
 # ==========================================
 
 def ask_gemini(prompt):
@@ -77,20 +78,15 @@ def ask_gemini(prompt):
 
                 break
 
-    return """
-⚠️ AI सर्वर इस समय व्यस्त है।
-
-कृपया 1-2 मिनट बाद पुनः प्रयास करें।
-"""
+    return "⚠️ AI सर्वर इस समय व्यस्त है। कृपया कुछ देर बाद पुनः प्रयास करें।"
 
 # ==========================================
-# Home Page
+# Home
 # ==========================================
 
 @app.route("/")
 def home():
     return render_template("index.html")
-
 
 # ==========================================
 # Hanuman Page
@@ -100,9 +96,8 @@ def home():
 def hanuman():
     return render_template("hanuman.html")
 
-
 # ==========================================
-# History Page
+# History
 # ==========================================
 
 @app.route("/history/<name>")
@@ -112,21 +107,22 @@ def history(name):
     cursor = conn.cursor()
 
     cursor.execute(
-    "SELECT content FROM history_cache WHERE name=?",
-    (name,)
-)
+        "SELECT content FROM history_cache WHERE name=?",
+        (name,)
+    )
 
     row = cursor.fetchone()
     conn.close()
 
+    # Cache मिला
     if row:
-        history = row[0]
-    return render_template(
-        "history.html",
-        name=name,
-        history=history
-    )
+        return render_template(
+            "history.html",
+            name=name,
+            history=row[0]
+        )
 
+    # Cache नहीं मिला
     prompt = f"""
 {name} के बारे में हिन्दी में लगभग 350 शब्दों में विस्तार से बताइए।
 
@@ -149,19 +145,21 @@ Markdown बिल्कुल मत प्रयोग करें।
     cursor = conn.cursor()
 
     cursor.execute(
-        "INSERT OR REPLACE INTO history_cache (name, content) VALUES (?, ?)",
+        """
+        INSERT OR REPLACE INTO history_cache(name, content)
+        VALUES(?,?)
+        """,
         (name, history)
-)
+    )
 
     conn.commit()
-    conn.close()    
+    conn.close()
 
     return render_template(
         "history.html",
         name=name,
         history=history
     )
-
 
 # ==========================================
 # AI Chat
@@ -174,31 +172,30 @@ def chat():
 
     if request.method == "POST":
 
-        question = request.form["question"]
+        question = request.form.get("question", "")
 
-        prompt = f"""
+        if question.strip():
+
+            prompt = f"""
 तुम एक हिन्दू धर्म विशेषज्ञ AI हो।
 
 उपयोगकर्ता का प्रश्न:
 
 {question}
 
-उत्तर:
+उत्तर केवल हिन्दी में दो।
 
-केवल हिन्दी में दो।
-
-उत्तर स्पष्ट, सरल और सही होना चाहिए।
+उत्तर सरल, स्पष्ट और सही होना चाहिए।
 
 Markdown का प्रयोग मत करो।
 """
 
-        answer = ask_gemini(prompt)
+            answer = ask_gemini(prompt)
 
     return render_template(
         "chat.html",
         answer=answer
     )
-
 
 # ==========================================
 # Error Pages
@@ -219,9 +216,8 @@ def internal_error(error):
         message="सर्वर में समस्या आ गई है। कृपया बाद में पुनः प्रयास करें।"
     ), 500
 
-
 # ==========================================
-# Run
+# Main
 # ==========================================
 
 if __name__ == "__main__":
@@ -230,4 +226,3 @@ if __name__ == "__main__":
         port=int(os.environ.get("PORT", 5000)),
         debug=True
     )
-    

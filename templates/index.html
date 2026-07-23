@@ -97,6 +97,17 @@ onkeyup="searchCard()">
 
 </div>
 
+<div class="search-box">
+
+<input
+type="text"
+id="searchInput"
+placeholder="🔍 Search Hindu Character...">
+
+<div id="searchResults"></div>
+
+</div>
+
 <!-- Buttons -->
 
 <a href="/chat" class="chat-btn">
@@ -105,6 +116,10 @@ onkeyup="searchCard()">
 
 <a href="/hanuman" class="chat-btn">
 🚩 Hanuman Chalisa
+</a>
+
+<a href="/family-tree" class="chat-btn">
+    🌳 Hindu Family Tree
 </a>
 
 <!-- Cards -->
@@ -159,6 +174,17 @@ Open
 
 </div>
 
+<div class="search-box">
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="🔍 Search Character...">
+
+    <div id="searchResults"></div>
+
+</div>
+
 </div>
 
 <script>
@@ -199,6 +225,49 @@ loader.style.display="none";
 
 });
 
+</script>
+
+<script>
+const input = document.getElementById("searchInput");
+const results = document.getElementById("searchResults");
+
+input.addEventListener("keyup", function () {
+
+    const q = input.value.trim();
+
+    if (q === "") {
+        results.style.display = "none";
+        results.innerHTML = "";
+        return;
+    }
+
+    fetch("/search?q=" + encodeURIComponent(q))
+        .then(response => response.json())
+        .then(data => {
+
+            results.innerHTML = "";
+
+            if (data.length === 0) {
+                results.style.display = "none";
+                return;
+            }
+
+            results.style.display = "block";
+
+            data.forEach(person => {
+
+                results.innerHTML += `
+                    <div class="result"
+                         onclick="window.location='/person/${encodeURIComponent(person.name)}'">
+                        ${person.name}
+                    </div>
+                `;
+
+            });
+
+        });
+
+});
 </script>
 
 </body>

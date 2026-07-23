@@ -17,15 +17,55 @@
 
     <h1>{{ name }}</h1>
 
-    <p style="font-size:20px;line-height:1.8;">
+    <p id="historyText" style="font-size:20px;line-height:1.8;">
         {{ history }}
     </p>
 
     <br>
 
+    <button onclick="playVoice()">🔊 सुनें</button>
+
+    <button onclick="pauseVoice()">⏸ Pause</button>
+
+    <button onclick="stopVoice()">⏹ Stop</button>
+
+    <br><br>
+
     <a href="/">⬅ Back to Home</a>
 
 </div>
+
+<script>
+
+let speech;
+
+function playVoice(){
+
+    const text = document.getElementById("historyText").innerText;
+
+    speechSynthesis.cancel();
+
+    speech = new SpeechSynthesisUtterance(text);
+
+    speech.lang = "hi-IN";
+    speech.rate = 1;
+    speech.pitch = 1;
+    speech.volume = 1;
+
+    const voices = speechSynthesis.getVoices();
+
+    console.log(voices);
+
+    const hindiVoice = voices.find(v => v.lang.startsWith("hi"));
+
+    if(hindiVoice){
+        speech.voice = hindiVoice;
+    }
+
+    speechSynthesis.speak(speech);
+
+}
+</script>
 
 </body>
 </html>

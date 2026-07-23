@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ person[1] }}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+    <h2>👨‍👩‍👧 Hindu Family Details</h2>
+
+</nav>
+
+<div class="card"
+     style="max-width:900px;margin:40px auto;padding:30px;">
+
+    <div style="text-align:center;">
+
+        <img
+        src="{{ url_for('static',
+        filename='images/' + person[6]) }}"
+        alt="{{ person[1] }}"
+        style="width:250px;height:250px;border-radius:20px;object-fit:cover;">
+
+    </div>
+
+    <h1 style="text-align:center;margin-top:20px;">
+
+        {{ person[1] }}
+
+    </h1>
+
+    <hr><br>
+
+    <h3>👨 पिता</h3>
+
+    <p>{{ person[2] }}</p>
+
+    <br>
+
+    <h3>👩 माता</h3>
+
+    <p>{{ person[3] }}</p>
+
+    <br>
+
+    <h3>❤️ जीवनसाथी</h3>
+
+    <p>{{ person[4] }}</p>
+
+    <br>
+
+    <h3>👶 संतान</h3>
+
+    <p>{{ person[5] }}</p>
+
+    <br>
+
+    <h3>📖 परिचय</h3>
+
+    <p style="font-size:20px;line-height:1.8;">
+
+        {{ person[7] }}
+
+    </p>
+
+    <br>
+
+    <div style="text-align:center;">
+
+        <a href="/history/{{ person[1] }}">
+
+            📜 AI History
+
+        </a>
+
+        &nbsp;&nbsp;
+
+        <a href="/family-tree">
+
+            🌳 Family Tree
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

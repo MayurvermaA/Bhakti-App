@@ -143,4 +143,46 @@ nav{
     .card h2{
         font-size:24px;
     }
+    .search-box{
+
+width:450px;
+margin:30px auto;
+position:relative;
+
+}
+
+#searchInput{
+
+width:100%;
+padding:14px;
+border-radius:10px;
+border:none;
+font-size:18px;
+
+}
+
+#searchResults{
+
+position:absolute;
+width:100%;
+background:white;
+border-radius:10px;
+display:none;
+z-index:999;
+
+}
+
+.result{
+
+padding:12px;
+cursor:pointer;
+border-bottom:1px solid #ddd;
+
+}
+
+.result:hover{
+
+background:#f2f2f2;
+
+}
 }

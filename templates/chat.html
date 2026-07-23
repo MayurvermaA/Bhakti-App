@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Hindu Chat</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>🕉 AI Hindu Chat</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
@@ -24,95 +26,207 @@
             placeholder="अपना प्रश्न लिखें..."
             required>
 
-        <button type="submit">पूछें</button>
+        <br><br>
 
-        <button type="button" onclick="startListening()">
+        <button type="submit">
+            💬 पूछें
+        </button>
+
+        <button type="button"
+                onclick="startListening()">
             🎤 Voice
         </button>
 
-        <button type="button" onclick="speakAnswer()">
+        <button type="button"
+                onclick="speakAnswer()">
             🔊 Listen
+        </button>
+
+        <button type="button"
+                onclick="pauseVoice()">
+            ⏸ Pause
+        </button>
+
+        <button type="button"
+                onclick="stopVoice()">
+            ⏹ Stop
         </button>
 
     </form>
 
     {% if answer %}
 
-    <h2>उत्तर</h2>
+    <div class="card"
+         style="margin-top:30px;">
 
-    <p id="answer">
-        {{ answer }}
-    </p>
+        <h2>🤖 AI उत्तर</h2>
+
+        <p id="answer"
+           style="font-size:20px;
+                  line-height:1.8;
+                  white-space:pre-line;">
+
+            {{ answer }}
+
+        </p>
+
+    </div>
 
     {% endif %}
+
+    <br>
+
+    <a href="/">
+        ⬅ Back to Home
+    </a>
 
 </div>
 
 <script>
 
-function startListening() {
+let speech;
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+// ===============================
+// Voice Input
+// ===============================
 
-    if (!SpeechRecognition) {
+function startListening(){
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if(!SpeechRecognition){
+
         alert("Speech Recognition उपलब्ध नहीं है");
+
         return;
+
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition =
+        new SpeechRecognition();
 
-    recognition.lang = "hi-IN";
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    recognition.lang="hi-IN";
 
-    recognition.onstart = function () {
-        console.log("Mic Started...");
+    recognition.continuous=false;
+
+    recognition.interimResults=false;
+
+    recognition.maxAlternatives=1;
+
+    recognition.onresult=function(event){
+
+        document.getElementById("question").value=
+        event.results[0][0].transcript;
+
     };
 
-    recognition.onresult = function (event) {
-        document.getElementById("question").value =
-            event.results[0][0].transcript;
-    };
+    recognition.onerror=function(event){
 
-    recognition.onerror = function (event) {
-        if (event.error !== "no-speech") {
-            alert("Voice Error: " + event.error);
-        }
-    };
+        alert("Voice Error : "+event.error);
 
-    recognition.onend = function () {
-        console.log("Mic Stopped");
     };
 
     recognition.start();
+
 }
 
-function speakAnswer() {
+// ===============================
+// Speak AI Answer
+// ===============================
 
-    let answer = document.getElementById("answer");
+function speakAnswer(){
+alert("Listen button clicked");
 
-    if (!answer) {
+    let answer=
+    document.getElementById("answer");
+
+    if(!answer){
 
         alert("पहले प्रश्न पूछें।");
+
         return;
 
     }
 
-    window.speechSynthesis.cancel();
+    speechSynthesis.cancel();
 
-    let speech = new SpeechSynthesisUtterance(answer.innerText);
+    speech=
+    new SpeechSynthesisUtterance(
+        answer.innerText
+    );
 
-    speech.lang = "hi-IN";
-    speech.rate = 1;
-    speech.pitch = 1;
-    speech.volume = 1;
+    let voices=
+    speechSynthesis.getVoices();
 
-    window.speechSynthesis.speak(speech);
+    for(let voice of voices){
+
+        if(voice.lang.includes("hi")){
+
+            speech.voice=voice;
+
+            break;
+
+        }
+
+    }
+
+    speech.lang="hi-IN";
+
+    speech.rate=1;
+
+    speech.pitch=1;
+
+    speech.volume=1;
+
+    speechSynthesis.speak(speech);
 
 }
 
+// ===============================
+// Pause Voice
+// ===============================
+
+function pauseVoice(){
+
+    speechSynthesis.pause();
+
+}
+
+// ===============================
+// Stop Voice
+// ===============================
+
+function stopVoice(){
+
+    speechSynthesis.cancel();
+
+}
+
+// ===============================
+// Auto Speak
+// ===============================
+
+window.onload=function(){
+
+    let answer=
+    document.getElementById("answer");
+
+    if(answer){
+
+        speakAnswer();
+        alert("JavaScript Loaded");
+
+    }
+
+};
+
 </script>
+
+<button onclick="alert('Test Button Works')">
+    TEST
+</button>
 
 </body>
 </html>

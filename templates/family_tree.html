@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>🌳 Hindu Family Tree</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+    <h2>🌳 Hindu Family Tree</h2>
+
+</nav>
+
+<div class="hero">
+
+    <h1>Hindu Family Tree</h1>
+
+    <p>
+        हिन्दू धर्म के प्रमुख पात्रों के पारिवारिक संबंध देखें।
+    </p>
+
+</div>
+
+<div class="container">
+
+{% for person in persons %}
+
+<div class="card">
+
+    <img
+        src="{{ url_for('static', filename='images/' + person[1]) }}"
+        alt="{{ person[0] }}">
+
+    <h2 style="text-align:center;margin-top:15px;">
+
+        {{ person[0] }}
+
+    </h2>
+
+    <div style="text-align:center;">
+
+        <a href="/person/{{ person[0] }}">
+
+            👨‍👩‍👧 View Family
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<div style="text-align:center;margin:40px;">
+
+    <a href="/"
+       class="chat-btn">
+
+        ⬅ Back to Home
+
+    </a>
+
+</div>
+
+</body>
+
+</html>

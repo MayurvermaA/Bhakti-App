@@ -1,32 +1,26 @@
 import os
-import time
 import sqlite3
+import requests
 
 from flask import Flask, render_template, request
 from dotenv import load_dotenv
-from google import genai
 
 # ==========================================
-# Load Environment Variables
+# Load Environment
 # ==========================================
 
 load_dotenv()
 
-client = genai.Client(
-    api_key=os.getenv("GEMINI_API_KEY")
-)
-
-# ==========================================
-# Flask App
-# ==========================================
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 app = Flask(__name__)
 
 # ==========================================
-# Cache Database
+# Database
 # ==========================================
 
 def init_db():
+
     conn = sqlite3.connect("cache.db")
     cursor = conn.cursor()
 
@@ -44,42 +38,59 @@ def init_db():
 init_db()
 
 # ==========================================
-# Gemini Helper
+# OpenRouter AI
 # ==========================================
+def ask_ai(prompt):
 
-def ask_gemini(prompt):
+    url = "https://openrouter.ai/api/v1/chat/completions"
 
-    models = [
-        "gemini-2.5-flash",
-        "gemini-2.0-flash"
-    ]
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:5000",
+        "X-Title": "Bhakti App"
+    }
 
-    for model in models:
+    payload = {
+        "model": "openai/gpt-oss-20b:free",
+        "messages": [
+            {
+                "role": "system",
+                "content": "तुम हिन्दू धर्म विशेषज्ञ AI हो। हमेशा उत्तर केवल हिन्दी में दो। Markdown का प्रयोग मत करो।"
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    }
 
-        for attempt in range(3):
+    try:
+        response = requests.post(
+            url,
+            headers=headers,
+            json=payload,
+            timeout=60
+        )
 
-            try:
+        print("=" * 50)
+        print("Status:", response.status_code)
+        print(response.text)
+        print("=" * 50)
 
-                response = client.models.generate_content(
-                    model=model,
-                    contents=prompt
-                )
+        if response.status_code != 200:
+            return f"API Error ({response.status_code})"
 
-                if response.text:
-                    return response.text
+        result = response.json()
+        return result["choices"][0]["message"]["content"]
 
-            except Exception as e:
+    except Exception as e:
+        print(e)
+        return f"Error: {e}"
 
-                print(f"{model} Attempt {attempt+1}: {e}")
 
-                if "503" in str(e):
-                    time.sleep(5)
-                    continue
-
-                break
-
-    return "⚠️ AI सर्वर इस समय व्यस्त है। कृपया कुछ देर बाद पुनः प्रयास करें।"
-
+  
+   
 # ==========================================
 # Home
 # ==========================================
@@ -95,7 +106,6 @@ def home():
 @app.route("/hanuman")
 def hanuman():
     return render_template("hanuman.html")
-
 # ==========================================
 # History
 # ==========================================
@@ -112,17 +122,17 @@ def history(name):
     )
 
     row = cursor.fetchone()
+
     conn.close()
 
-    # Cache मिला
     if row:
+
         return render_template(
             "history.html",
             name=name,
             history=row[0]
         )
 
-    # Cache नहीं मिला
     prompt = f"""
 {name} के बारे में हिन्दी में लगभग 350 शब्दों में विस्तार से बताइए।
 
@@ -139,14 +149,14 @@ def history(name):
 Markdown बिल्कुल मत प्रयोग करें।
 """
 
-    history = ask_gemini(prompt)
+    history = ask_ai(prompt)
 
     conn = sqlite3.connect("cache.db")
     cursor = conn.cursor()
 
     cursor.execute(
         """
-        INSERT OR REPLACE INTO history_cache(name, content)
+        INSERT OR REPLACE INTO history_cache(name,content)
         VALUES(?,?)
         """,
         (name, history)
@@ -177,7 +187,7 @@ def chat():
         if question.strip():
 
             prompt = f"""
-तुम एक हिन्दू धर्म विशेषज्ञ AI हो।
+तुम हिन्दू धर्म विशेषज्ञ AI हो।
 
 उपयोगकर्ता का प्रश्न:
 
@@ -185,12 +195,12 @@ def chat():
 
 उत्तर केवल हिन्दी में दो।
 
-उत्तर सरल, स्पष्ट और सही होना चाहिए।
+उत्तर सरल, स्पष्ट और तथ्यात्मक होना चाहिए।
 
 Markdown का प्रयोग मत करो।
 """
 
-            answer = ask_gemini(prompt)
+            answer = ask_ai(prompt)
 
     return render_template(
         "chat.html",
@@ -203,24 +213,100 @@ Markdown का प्रयोग मत करो।
 
 @app.errorhandler(404)
 def page_not_found(error):
+
     return render_template(
         "error.html",
-        message="पेज नहीं मिला।"
+        message="⚠️ पेज नहीं मिला।"
     ), 404
 
 
 @app.errorhandler(500)
 def internal_error(error):
+
     return render_template(
         "error.html",
-        message="सर्वर में समस्या आ गई है। कृपया बाद में पुनः प्रयास करें।"
+        message="⚠️ सर्वर में समस्या आ गई है। कृपया बाद में पुनः प्रयास करें।"
     ), 500
+
+@app.route("/person/<name>")
+def person(name):
+
+    conn = sqlite3.connect("family.db")
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT * FROM persons WHERE name=?",
+        (name,)
+    )
+
+    person = cur.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "person.html",
+        person=person
+    )
+
+    from flask import jsonify
+
+# ==========================================
+# Family Tree
+# ==========================================
+
+@app.route("/family-tree")
+def family_tree():
+
+    conn = sqlite3.connect("family.db")
+    cur = conn.cursor()
+
+    cur.execute("SELECT name, image FROM persons ORDER BY name")
+
+    persons = cur.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "family_tree.html",
+        persons=persons
+    )    
+
+@app.route("/search")
+def search():
+
+    query = request.args.get("q", "").strip()
+
+    conn = sqlite3.connect("family.db")
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT name,image
+        FROM persons
+        WHERE name LIKE ?
+        ORDER BY name
+        LIMIT 15
+    """, (f"%{query}%",))
+
+    rows = cur.fetchall()
+    conn.close()
+
+    result = []
+
+    for row in rows:
+
+        result.append({
+            "name": row[0],
+            "image": row[1]
+        })
+
+    return jsonify(result)  
 
 # ==========================================
 # Main
 # ==========================================
 
 if __name__ == "__main__":
+
     app.run(
         host="0.0.0.0",
         port=int(os.environ.get("PORT", 5000)),
